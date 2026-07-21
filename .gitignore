@@ -40,3 +40,6 @@ yarn-error.log*
 promote.ts
 promote.js
 replace_fetch.js
+
+# Ignore markdown folders
+md/

@@ -13,6 +13,7 @@ import {
 import { apiFetch } from './utils/apiClient';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const MAIN_PORTAL_URL = import.meta.env.VITE_MAIN_PORTAL_URL || 'http://localhost:3000';
 
 function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('dnsToken'));
@@ -65,7 +66,7 @@ function App() {
         fetchProfile(data.userId);
       } else {
         alert('Invalid or expired bridge token. Please login from the main portal.');
-        window.location.href = 'http://localhost:3000/login';
+        window.location.href = `${MAIN_PORTAL_URL}/login`;
       }
     } catch (e) {
       alert('Error consuming bridge token');
@@ -116,7 +117,7 @@ function App() {
     setToken(null);
     setUserId(null);
     localStorage.clear();
-    window.location.href = "http://localhost:3000/login";
+    window.location.href = `${MAIN_PORTAL_URL}/login`;
   };
 
   if (isConsuming) {
@@ -141,7 +142,7 @@ function App() {
           <p className="text-slate-400 mb-8 leading-relaxed">
             Direct login is disabled for security. You must authenticate via the main portal bridge.
           </p>
-          <a href="http://localhost:3000/dashboard" className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-lg block font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)]">
+          <a href={`${MAIN_PORTAL_URL}/dashboard`} className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-lg block font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)]">
             Return to Dashboard
           </a>
         </div>
@@ -182,7 +183,7 @@ function App() {
 
         <div className="p-4 border-t border-white/5 space-y-2">
           <a 
-            href="http://localhost:3000/dashboard"
+            href={`${MAIN_PORTAL_URL}/dashboard`}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
           >
             <ChevronRight className="w-4 h-4" /> Main Dashboard
