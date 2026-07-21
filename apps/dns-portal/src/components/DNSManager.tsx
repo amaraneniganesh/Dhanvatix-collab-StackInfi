@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Server, Activity, ShieldCheck, Edit2, Check, X } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Server, Activity, ShieldCheck, Edit2, Check, X } from 'lucide-react';
 import { apiFetch } from '../utils/apiClient';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -10,7 +10,7 @@ interface DNSManagerProps {
   onBack: () => void;
 }
 
-export default function DNSManager({ domainId, rootDomain }: DNSManagerProps) {
+export default function DNSManager({ domainId, rootDomain, onBack }: DNSManagerProps) {
   const [records, setRecords] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
@@ -127,6 +127,14 @@ export default function DNSManager({ domainId, rootDomain }: DNSManagerProps) {
 
   return (
     <div className="animate-in fade-in duration-500">
+      <button 
+        onClick={onBack} 
+        className="mb-6 flex items-center gap-2 text-slate-400 hover:text-white transition font-bold"
+      >
+        <ArrowLeft size={16} />
+        Back to Overview
+      </button>
+
       {/* Cloudflare-style Add Record Bar */}
       <div className="bg-[#121214] rounded-2xl p-6 mb-8 border border-white/5 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-600 to-blue-500"></div>
