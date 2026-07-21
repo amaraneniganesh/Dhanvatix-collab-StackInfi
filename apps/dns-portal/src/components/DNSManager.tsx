@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Trash2, Globe, Server, Activity, ShieldCheck, Edit2, Check, X } from 'lucide-react';
+import { Plus, Trash2, Server, Activity, ShieldCheck, Edit2, Check, X } from 'lucide-react';
 import { apiFetch } from '../utils/apiClient';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -10,7 +10,7 @@ interface DNSManagerProps {
   onBack: () => void;
 }
 
-export default function DNSManager({ domainId, rootDomain, onBack }: DNSManagerProps) {
+export default function DNSManager({ domainId, rootDomain }: DNSManagerProps) {
   const [records, setRecords] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);

@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import DNSManager from './components/DNSManager';
 import { 
-  Settings, 
   ShieldCheck, 
   AlertCircle, 
   Search, 
