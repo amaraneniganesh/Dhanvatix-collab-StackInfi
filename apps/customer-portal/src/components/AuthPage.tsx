@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ChevronLeft, KeyRound, Sparkles, UserPlus, Fingerprint } from 'lucide-react';
+import { ChevronLeft, KeyRound, Sparkles, UserPlus, Fingerprint, Mail } from 'lucide-react';
 import { apiFetch } from '../utils/apiClient';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function AuthPage() {
   const navigate = useNavigate();
-  const [view, setView] = useState<'login' | 'register' | 'otp'>('login');
+  const [view, setView] = useState<'login' | 'register' | 'otp' | 'forgot-password'>('login');
   
   // Registration fields
   const [firstName, setFirstName] = useState('');
@@ -25,7 +25,7 @@ export default function AuthPage() {
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-
+  const [forgotPasswordSuccess, setForgotPasswordSuccess] = useState(false);
   const getDeviceId = () => {
     let deviceId = localStorage.getItem('deviceId');
     if (!deviceId) {
@@ -138,6 +138,32 @@ export default function AuthPage() {
       setLoading(false);
     }
   };
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg('');
+    setForgotPasswordSuccess(false);
+    setLoading(true);
+    
+    try {
+      const res = await apiFetch(`${API_URL}/auth/forgot-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      
+      const data = await res.json();
+      
+      if (res.ok) {
+        setForgotPasswordSuccess(true);
+      } else {
+        setErrorMsg(data.message || 'Failed to send reset link');
+      }
+    } catch (err) {
+      setErrorMsg('Network error occurred.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const googleAuthStub = () => {
     setErrorMsg('Google Auth is coming soon!');
@@ -167,11 +193,11 @@ export default function AuthPage() {
 
           <div className="relative z-10 my-auto text-center">
             <div className="w-16 h-16 bg-gradient-to-br from-teal-400 to-blue-500 rounded-2xl mx-auto flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(45,212,191,0.3)]">
-              {view === 'login' ? <KeyRound className="w-8 h-8 text-white" /> : view === 'register' ? <UserPlus className="w-8 h-8 text-white" /> : <Fingerprint className="w-8 h-8 text-white" />}
+              {view === 'login' ? <KeyRound className="w-8 h-8 text-white" /> : view === 'register' ? <UserPlus className="w-8 h-8 text-white" /> : view === 'forgot-password' ? <Mail className="w-8 h-8 text-white" /> : <Fingerprint className="w-8 h-8 text-white" />}
             </div>
             
             <h1 className="text-3xl font-bold text-white mb-4 tracking-tight">
-              {view === 'login' ? 'Welcome Back' : view === 'register' ? 'Join Dhanvatix' : 'Verify Identity'}
+              {view === 'login' ? 'Welcome Back' : view === 'register' ? 'Join Dhanvatix' : view === 'forgot-password' ? 'Reset Password' : 'Verify Identity'}
             </h1>
             
             <p className="text-slate-400 text-sm leading-relaxed max-w-[250px] mx-auto">
@@ -179,6 +205,8 @@ export default function AuthPage() {
                 ? 'Sign in to manage your domains and DNS configurations.' 
                 : view === 'register' 
                   ? 'Create an account to claim your premium Dhanvatix & StackInfi domains.'
+                  : view === 'forgot-password'
+                    ? 'Enter your email address and we will send you a secure link to reset your password.'
                   : 'Enter the security code sent to your email to verify your identity.'}
             </p>
           </div>
@@ -241,6 +269,56 @@ export default function AuthPage() {
                 </button>
               </form>
             </div>
+          ) : view === 'forgot-password' ? (
+            <div className="animate-in fade-in slide-in-from-right-8 duration-700 ease-out max-w-md w-full mx-auto">
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-bold text-white mb-3">Forgot Password</h2>
+                <p className="text-slate-400 text-sm leading-relaxed">
+                  Enter your email to receive a password reset link.
+                </p>
+              </div>
+              
+              {forgotPasswordSuccess ? (
+                <div className="p-6 rounded-2xl bg-teal-500/10 border border-teal-500/20 text-center mb-8">
+                  <div className="w-12 h-12 bg-teal-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Mail className="w-6 h-6 text-teal-400" />
+                  </div>
+                  <h3 className="text-white font-bold text-lg mb-2">Check your email</h3>
+                  <p className="text-slate-400 text-sm">
+                    We've sent a password reset link to <span className="text-white font-medium">{email}</span>.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleForgotPassword} className="space-y-6">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2 ml-1">Email Address</label>
+                    <input 
+                      type="email" 
+                      required
+                      className="w-full p-4 rounded-xl border border-white/10 bg-black/40 text-white focus:border-teal-500 focus:bg-black/60 focus:ring-1 focus:ring-teal-500 outline-none transition-all"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                    />
+                  </div>
+                  
+                  <button 
+                    type="submit" 
+                    disabled={loading || !email}
+                    className="w-full bg-white text-black hover:bg-slate-200 py-4 rounded-xl font-bold text-[15px] transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] disabled:opacity-50 mt-4"
+                  >
+                    {loading ? 'Sending...' : 'Send Reset Link'}
+                  </button>
+                </form>
+              )}
+              
+              <button 
+                type="button" 
+                onClick={() => { setView('login'); setForgotPasswordSuccess(false); setErrorMsg(''); }}
+                className="w-full text-slate-500 text-sm hover:text-white font-medium transition-colors pt-6"
+              >
+                Return to login
+              </button>
+            </div>
           ) : view === 'login' ? (
             <div className="animate-in fade-in slide-in-from-right-8 duration-700 ease-out max-w-md w-full mx-auto">
               <div className="mb-10 text-center">
@@ -284,6 +362,12 @@ export default function AuthPage() {
                   <label htmlFor="rememberMe" className="text-sm font-medium text-slate-400 cursor-pointer">
                     Remember me for 7 days
                   </label>
+                </div>
+                
+                <div className="flex justify-end -mt-2">
+                  <button type="button" onClick={() => { setView('forgot-password'); setErrorMsg(''); }} className="text-xs font-bold text-teal-400 hover:text-teal-300 transition-colors">
+                    Forgot password?
+                  </button>
                 </div>
                 
                 <button  

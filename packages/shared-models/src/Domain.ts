@@ -8,6 +8,7 @@ export interface IDomain extends Document {
   cloudflareZoneId?: string;
   status: 'Pending' | 'Awaiting Verification' | 'Verified' | 'Failed' | 'Suspended' | 'Deleted';
   verificationCode?: string;
+  dnsRecordsBackup?: any[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,6 +26,7 @@ const DomainSchema = new Schema(
       default: 'Pending',
     },
     verificationCode: { type: String, unique: true, sparse: true },
+    dnsRecordsBackup: { type: [Schema.Types.Mixed], default: undefined },
   },
   { timestamps: true }
 );

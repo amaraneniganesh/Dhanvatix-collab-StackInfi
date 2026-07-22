@@ -113,7 +113,7 @@ export default function Dashboard() {
     }
   };
 
-  const manageDNS = async () => {
+  const manageDNS = async (domainId?: string) => {
     const res = await apiFetch(`${API_URL}/bridge/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -121,7 +121,11 @@ export default function Dashboard() {
     });
     if (res.ok) {
       const data = await res.json();
-      window.location.href = data.bridgeUrl;
+      let url = data.bridgeUrl;
+      if (domainId) {
+        url += `&domainId=${domainId}`;
+      }
+      window.location.href = url;
     } else {
       alert('Failed to generate bridge token');
     }
@@ -257,6 +261,15 @@ export default function Dashboard() {
   const stackinfiCount = domains.filter(d => d.rootDomain === 'stackinfi.in').length;
   const totalCount = domains.length;
 
+  const totalLimit = profile.domainLimit !== undefined ? profile.domainLimit : 4;
+  const isInfinite = totalLimit === 0;
+  const dhanvatixMax = isInfinite ? Infinity : Math.ceil(totalLimit / 2);
+  const stackinfiMax = isInfinite ? Infinity : Math.floor(totalLimit / 2);
+
+  const displayTotalLimit = isInfinite ? '∞' : totalLimit;
+  const displayDhanvatixMax = isInfinite ? '∞' : dhanvatixMax;
+  const displayStackinfiMax = isInfinite ? '∞' : stackinfiMax;
+
   return (
     <div className="min-h-screen bg-[#09090b] text-slate-300 font-sans flex">
       
@@ -333,7 +346,7 @@ export default function Dashboard() {
           </h2>
           <div className="flex items-center gap-4">
             <button 
-              onClick={manageDNS} 
+              onClick={() => manageDNS()} 
               className="bg-teal-500 hover:bg-teal-400 text-black px-4 py-1.5 rounded-full font-bold transition-all text-sm shadow-[0_0_15px_rgba(20,184,166,0.3)] flex items-center gap-2"
             >
               Manage DNS <ChevronRight className="w-4 h-4" />
@@ -357,21 +370,21 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="bg-[#121214] p-6 rounded-2xl border border-white/5 relative overflow-hidden">
                   <div className="text-slate-400 text-sm font-medium mb-1">Total Claimed</div>
-                  <div className="text-4xl font-bold text-white">{totalCount} <span className="text-lg text-slate-500 font-normal">/ 4</span></div>
+                  <div className="text-4xl font-bold text-white">{totalCount} <span className="text-lg text-slate-500 font-normal">/ {displayTotalLimit}</span></div>
                   <div className="absolute right-0 bottom-0 w-24 h-24 bg-teal-500/5 blur-2xl rounded-full"></div>
                 </div>
                 <div className="bg-[#121214] p-6 rounded-2xl border border-white/5">
                   <div className="text-slate-400 text-sm font-medium mb-1">Dhanvatix.in</div>
-                  <div className="text-4xl font-bold text-white">{dhanvatixCount} <span className="text-lg text-slate-500 font-normal">/ 2</span></div>
+                  <div className="text-4xl font-bold text-white">{dhanvatixCount} <span className="text-lg text-slate-500 font-normal">/ {displayDhanvatixMax}</span></div>
                   <div className="w-full bg-slate-800 h-1.5 rounded-full mt-4 overflow-hidden">
-                    <div className="bg-blue-500 h-full rounded-full" style={{ width: `${(dhanvatixCount / 2) * 100}%` }}></div>
+                    <div className="bg-blue-500 h-full rounded-full" style={{ width: isInfinite ? '100%' : `${(dhanvatixCount / dhanvatixMax) * 100}%` }}></div>
                   </div>
                 </div>
                 <div className="bg-[#121214] p-6 rounded-2xl border border-white/5">
                   <div className="text-slate-400 text-sm font-medium mb-1">StackInfi.in</div>
-                  <div className="text-4xl font-bold text-white">{stackinfiCount} <span className="text-lg text-slate-500 font-normal">/ 2</span></div>
+                  <div className="text-4xl font-bold text-white">{stackinfiCount} <span className="text-lg text-slate-500 font-normal">/ {displayStackinfiMax}</span></div>
                   <div className="w-full bg-slate-800 h-1.5 rounded-full mt-4 overflow-hidden">
-                    <div className="bg-purple-500 h-full rounded-full" style={{ width: `${(stackinfiCount / 2) * 100}%` }}></div>
+                    <div className="bg-purple-500 h-full rounded-full" style={{ width: isInfinite ? '100%' : `${(stackinfiCount / stackinfiMax) * 100}%` }}></div>
                   </div>
                 </div>
               </div>
@@ -379,8 +392,8 @@ export default function Dashboard() {
               <div className="bg-[#121214] border border-white/5 rounded-2xl p-6">
                 <h3 className="text-lg font-bold text-white mb-4">Welcome back, {profile.name}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                  You are currently using {totalCount} out of your 4 allowed free subdomains. 
-                  Remember that you can claim up to 2 domains per root zone (.dhanvatix.in and .stackinfi.in).
+                  You are currently using {totalCount} out of your {isInfinite ? 'unlimited' : displayTotalLimit} allowed free subdomains. 
+                  Remember that you can claim up to {displayDhanvatixMax} domains for .dhanvatix.in and {displayStackinfiMax} for .stackinfi.in.
                 </p>
                 <div className="flex gap-4">
                   <button onClick={() => setActiveTab('claim')} className="bg-white text-black px-6 py-2.5 rounded-lg font-semibold hover:bg-slate-200 transition-colors text-sm">
@@ -413,8 +426,8 @@ export default function Dashboard() {
                       value={rootDomain}
                       onChange={e => setRootDomain(e.target.value)}
                     >
-                      <option value="dhanvatix.in">.dhanvatix.in ({dhanvatixCount}/2 claimed)</option>
-                      <option value="stackinfi.in">.stackinfi.in ({stackinfiCount}/2 claimed)</option>
+                      <option value="dhanvatix.in">.dhanvatix.in ({dhanvatixCount}/{displayDhanvatixMax} claimed)</option>
+                      <option value="stackinfi.in">.stackinfi.in ({stackinfiCount}/{displayStackinfiMax} claimed)</option>
                     </select>
                   </div>
 
@@ -444,8 +457,10 @@ export default function Dashboard() {
                     <button 
                       onClick={claimDomain} 
                       disabled={
-                        (rootDomain === 'dhanvatix.in' && dhanvatixCount >= 2) || 
-                        (rootDomain === 'stackinfi.in' && stackinfiCount >= 2)
+                        !isInfinite && (
+                          (rootDomain === 'dhanvatix.in' && dhanvatixCount >= dhanvatixMax) || 
+                          (rootDomain === 'stackinfi.in' && stackinfiCount >= stackinfiMax)
+                        )
                       }
                       className="bg-teal-600 hover:bg-teal-500 text-white px-6 py-3.5 rounded-xl transition-all flex-1 font-bold shadow-lg shadow-teal-500/20 disabled:opacity-50 disabled:shadow-none"
                     >
@@ -460,10 +475,10 @@ export default function Dashboard() {
                     </div>
                   )}
                   
-                  {((rootDomain === 'dhanvatix.in' && dhanvatixCount >= 2) || (rootDomain === 'stackinfi.in' && stackinfiCount >= 2)) && (
+                  {!isInfinite && ((rootDomain === 'dhanvatix.in' && dhanvatixCount >= dhanvatixMax) || (rootDomain === 'stackinfi.in' && stackinfiCount >= stackinfiMax)) && (
                     <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-medium flex gap-3">
                       <ShieldAlert className="w-5 h-5 shrink-0" />
-                      You have reached the maximum limit of 2 domains for this root zone.
+                      You have reached the maximum limit of {rootDomain === 'dhanvatix.in' ? displayDhanvatixMax : displayStackinfiMax} domains for this root zone.
                     </div>
                   )}
                 </div>
@@ -515,7 +530,13 @@ export default function Dashboard() {
                             <Clock className="w-4 h-4" />
                             {d.createdAt ? new Date(d.createdAt).toLocaleDateString() : 'N/A'}
                           </td>
-                          <td className="p-4 text-right pr-6">
+                          <td className="p-4 text-right pr-6 flex justify-end gap-2">
+                            <button 
+                              onClick={() => manageDNS(d._id)} 
+                              className="bg-teal-500/10 hover:bg-teal-500/20 text-teal-400 px-3 py-1.5 rounded text-xs font-bold transition-colors border border-teal-500/20"
+                            >
+                              Manage DNS
+                            </button>
                             <button 
                               onClick={() => deleteDomain(d._id)} 
                               className="text-red-400 hover:text-red-300 transition-colors p-2 hover:bg-red-500/10 rounded"

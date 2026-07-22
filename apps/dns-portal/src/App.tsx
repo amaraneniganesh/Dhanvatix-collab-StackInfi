@@ -35,6 +35,11 @@ function App() {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const bridgeToken = urlParams.get('token');
+    const targetDomainId = urlParams.get('domainId');
+
+    if (targetDomainId) {
+      localStorage.setItem('targetDomainId', targetDomainId);
+    }
 
     if (bridgeToken && !consumeAttempted.current) {
       consumeAttempted.current = true;
@@ -79,7 +84,17 @@ function App() {
     if (!id) return;
     const res = await apiFetch(`${API_URL}/domains?userId=${id}`);
     const data = await res.json();
-    setDomains(data.domains || []);
+    const fetchedDomains = data.domains || [];
+    setDomains(fetchedDomains);
+    
+    const targetId = localStorage.getItem('targetDomainId');
+    if (targetId) {
+      const target = fetchedDomains.find((d: any) => d._id === targetId);
+      if (target) {
+        setSelectedDomain(target);
+      }
+      localStorage.removeItem('targetDomainId');
+    }
   };
 
   const fetchProfile = async (id = userId) => {

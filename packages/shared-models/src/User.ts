@@ -16,6 +16,8 @@ export interface IUser extends Document {
   isEmailVerified: boolean;
   otpCode?: string;
   otpExpiresAt?: Date;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
   lastIp?: string;
   deviceInfo?: string;
   location?: {
@@ -50,6 +52,8 @@ const UserSchema = new Schema(
     isEmailVerified: { type: Boolean, default: false },
     otpCode: { type: String },
     otpExpiresAt: { type: Date },
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
     lastIp: { type: String },
     deviceInfo: { type: String },
     location: {

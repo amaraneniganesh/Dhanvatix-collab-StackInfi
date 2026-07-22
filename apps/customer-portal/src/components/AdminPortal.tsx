@@ -108,6 +108,27 @@ export default function AdminPortal() {
     }
   };
 
+  const toggleBlockUser = async (userId: string, currentStatus: string) => {
+    const action = currentStatus === 'suspended' ? 'unblock' : 'block';
+    if (!window.confirm(`Are you sure you want to ${action} this user?`)) return;
+    
+    try {
+      const res = await apiFetch(`${API_URL}/admin/users/${userId}/${action}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        fetchUsers();
+      } else {
+        alert(`Failed to ${action} user`);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const fetchRecords = async (domainId: string) => {
     // toggle off if already fetched
     if (domainRecords[domainId]) {
@@ -367,7 +388,10 @@ export default function AdminPortal() {
                                 )}
                               </div>
                               <div>
-                                <div className="text-white font-bold text-sm">{u.name}</div>
+                                <div className="text-white font-bold text-sm flex items-center gap-2">
+                                  {u.name}
+                                  {u.status === 'suspended' && <span className="bg-red-500/10 text-red-400 border border-red-500/20 px-1.5 py-0.5 rounded text-[10px] uppercase font-bold tracking-widest">Blocked</span>}
+                                </div>
                                 <div className="text-xs text-slate-500 font-mono">@{u.username}</div>
                               </div>
                             </div>
@@ -402,10 +426,18 @@ export default function AdminPortal() {
                                 
                                 {/* KYC SECURITY CARD */}
                                 <div className="bg-[#09090b] p-6 rounded-2xl border border-white/5 shadow-inner">
-                                  <h4 className="text-sm font-bold text-slate-300 uppercase tracking-widest mb-6 flex items-center gap-2">
-                                    <ShieldCheck className="text-red-500" size={18} />
-                                    Security & KYC Data
-                                  </h4>
+                                  <div className="flex items-center justify-between mb-6">
+                                    <h4 className="text-sm font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                                      <ShieldCheck className="text-red-500" size={18} />
+                                      Security & KYC Data
+                                    </h4>
+                                    <button 
+                                      onClick={() => toggleBlockUser(u._id, u.status)}
+                                      className={`text-xs font-bold px-3 py-1.5 rounded transition-colors ${u.status === 'suspended' ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20'}`}
+                                    >
+                                      {u.status === 'suspended' ? 'Unblock User' : 'Block User'}
+                                    </button>
+                                  </div>
                                   
                                   {hasKyc ? (
                                     <div className="space-y-6">
