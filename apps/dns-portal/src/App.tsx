@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import DNSManager from './components/DNSManager';
 import { 
   ShieldCheck, 
@@ -70,11 +71,11 @@ function App() {
         fetchDomains(data.userId);
         fetchProfile(data.userId);
       } else {
-        alert('Invalid or expired bridge token. Please login from the main portal.');
+        toast.error('Invalid or expired bridge token. Please login from the StackInfi portal.');
         window.location.href = `${MAIN_PORTAL_URL}/login`;
       }
     } catch (e) {
-      alert('Error consuming bridge token');
+      toast.error('Error consuming bridge token');
     } finally {
       setIsConsuming(false);
     }
@@ -153,12 +154,12 @@ function App() {
           <div className="mx-auto bg-slate-900 w-16 h-16 flex items-center justify-center rounded-full mb-6 border border-white/10 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
             <ShieldCheck size={32} className="text-purple-400" />
           </div>
-          <h1 className="text-3xl font-bold mb-4 text-white">Dhanvatix <span className="text-purple-400">DNS</span></h1>
+          <h1 className="text-3xl font-bold mb-4 text-white">StackInfi & Dhanvatix <span className="text-purple-400">DNS</span></h1>
           <p className="text-slate-400 mb-8 leading-relaxed">
-            Direct login is disabled for security. You must authenticate via the main portal bridge.
+            Direct login is disabled for security. You must authenticate via the StackInfi portal bridge.
           </p>
           <a href={`${MAIN_PORTAL_URL}/dashboard`} className="bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-lg block font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.3)]">
-            Return to Dashboard
+            Return to StackInfi Dashboard
           </a>
         </div>
       </div>
@@ -175,7 +176,7 @@ function App() {
       <aside className="w-64 bg-[#121214] border-r border-white/5 flex flex-col hidden md:flex fixed h-full z-20">
         <div className="h-16 flex items-center px-6 border-b border-white/5 bg-[#09090b]">
           <div className="w-6 h-6 rounded-md bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.5)] mr-3"></div>
-          <span className="font-bold text-lg text-white tracking-wide">Dhanvatix <span className="text-purple-400">DNS</span></span>
+          <span className="font-bold text-lg text-white tracking-wide">StackInfi & Dhanvatix DNS</span>
         </div>
         
         <div className="p-4 flex-1 space-y-1">

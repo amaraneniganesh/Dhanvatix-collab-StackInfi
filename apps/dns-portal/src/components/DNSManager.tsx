@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Trash2, Server, Activity, ShieldCheck, Edit2, Check, X } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Globe, Server, Activity, ShieldCheck, Edit2, Check, X } from 'lucide-react';
+import { toast } from 'sonner';
 import { apiFetch } from '../utils/apiClient';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -57,10 +58,10 @@ export default function DNSManager({ domainId, rootDomain, onBack }: DNSManagerP
         setTimeout(fetchRecords, 500);
       } else {
         const error = await res.json();
-        alert(`Error adding record: ${error.message}`);
+        toast.error(`Error adding record: ${error.message}`);
       }
     } catch (e) {
-      alert('Network error adding record');
+      toast.error('Network error adding record');
     } finally {
       setIsAdding(false);
     }
@@ -99,30 +100,38 @@ export default function DNSManager({ domainId, rootDomain, onBack }: DNSManagerP
         setTimeout(fetchRecords, 500);
       } else {
         const error = await res.json();
-        alert(`Error updating record: ${error.message}`);
+        toast.error(`Error updating record: ${error.message}`);
       }
     } catch (e) {
-      alert('Network error updating record');
+      toast.error('Network error updating record');
     }
   };
 
   const handleDeleteRecord = async (recordId: string) => {
-    if (!confirm('Are you sure you want to delete this record?')) return;
-    
-    try {
-      const res = await apiFetch(`${API_URL}/dns/${domainId}/records/${recordId}`, {
-        method: 'DELETE'
-      });
-      
-      if (res.ok) {
-        setRecords(records.filter(r => r.id !== recordId));
-      } else {
-        const error = await res.json();
-        alert(`Failed to delete record: ${error.message}`);
-      }
-    } catch (e) {
-      alert('Error deleting record');
-    }
+    toast('Are you sure you want to delete this record?', {
+      description: 'This action cannot be undone.',
+      action: {
+        label: 'Delete',
+        onClick: async () => {
+          try {
+            const res = await apiFetch(`${API_URL}/dns/${domainId}/records/${recordId}`, {
+              method: 'DELETE'
+            });
+            
+            if (res.ok) {
+              setRecords(records.filter(r => r.id !== recordId));
+              toast.success('Record deleted successfully');
+            } else {
+              const error = await res.json();
+              toast.error(`Failed to delete record: ${error.message}`);
+            }
+          } catch (e) {
+            toast.error('Error deleting record');
+          }
+        },
+      },
+      cancel: { label: 'Cancel' },
+    });
   };
 
   return (

@@ -19,6 +19,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { apiFetch } from '../utils/apiClient';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -98,10 +99,10 @@ export default function AdminPortal() {
         body: JSON.stringify({ limit: newLimit })
       });
       if (res.ok) {
-        alert('Domain limit updated successfully');
+        toast.success('Domain limit updated successfully');
         fetchUsers();
       } else {
-        alert('Failed to update limit');
+        toast.error('Failed to update limit');
       }
     } catch (e) {
       console.error(e);
@@ -227,7 +228,7 @@ export default function AdminPortal() {
       <aside className="w-64 bg-[#121214] border-r border-white/5 flex flex-col hidden md:flex fixed h-full z-20">
         <div className="h-16 flex items-center px-6 border-b border-white/5 bg-[#09090b]">
           <div className="w-6 h-6 rounded-md bg-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.5)] mr-3"></div>
-          <span className="font-bold text-lg text-white tracking-wide">Dhanvatix</span>
+          <span className="font-bold text-lg text-white tracking-wide">StackInfi & Dhanvatix</span>
         </div>
         
         <div className="p-4 flex-1 space-y-1">
@@ -289,7 +290,7 @@ export default function AdminPortal() {
         <header className="h-16 flex items-center justify-between px-8 border-b border-white/5 bg-[#121214] sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <ShieldCheck className="text-red-500" size={24} />
-          <h1 className="text-lg font-bold text-white tracking-wide">Dhanvatix <span className="text-red-500">Admin</span></h1>
+          <h1 className="text-lg font-bold text-white tracking-wide">StackInfi <span className="text-red-500">Admin</span></h1>
         </div>
         <div className="flex items-center gap-6">
           <span className="bg-red-500/10 text-red-400 px-3 py-1.5 rounded-full text-xs font-bold border border-red-500/20 flex items-center gap-2">

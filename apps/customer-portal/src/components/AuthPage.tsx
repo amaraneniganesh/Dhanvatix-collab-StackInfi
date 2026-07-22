@@ -187,7 +187,7 @@ export default function AuthPage() {
           <div className="relative z-10">
             <Link to="/" className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest text-teal-400 hover:text-teal-300 transition-colors uppercase bg-teal-400/10 px-4 py-2 rounded-full border border-teal-400/20">
               <ChevronLeft className="w-4 h-4" />
-              Return Home
+              StackInfi Home
             </Link>
           </div>
 
@@ -197,14 +197,14 @@ export default function AuthPage() {
             </div>
             
             <h1 className="text-3xl font-bold text-white mb-4 tracking-tight">
-              {view === 'login' ? 'Welcome Back' : view === 'register' ? 'Join Dhanvatix' : view === 'forgot-password' ? 'Reset Password' : 'Verify Identity'}
+              {view === 'login' ? 'Welcome Back' : view === 'register' ? 'Join StackInfi & Dhanvatix' : view === 'forgot-password' ? 'Reset Password' : 'Verify Identity'}
             </h1>
             
             <p className="text-slate-400 text-sm leading-relaxed max-w-[250px] mx-auto">
               {view === 'login' 
                 ? 'Sign in to manage your domains and DNS configurations.' 
                 : view === 'register' 
-                  ? 'Create an account to claim your premium Dhanvatix & StackInfi domains.'
+                  ? 'Create an account to claim your premium StackInfi & Dhanvatix domains.'
                   : view === 'forgot-password'
                     ? 'Enter your email address and we will send you a secure link to reset your password.'
                   : 'Enter the security code sent to your email to verify your identity.'}

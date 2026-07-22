@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { apiFetch } from '../utils/apiClient';
 import { 
   LayoutDashboard, 
@@ -103,13 +104,13 @@ export default function Dashboard() {
     });
     const data = await res.json();
     if (res.ok) {
-      alert('Claimed successfully!');
+      toast.success('Domain claimed successfully!');
       setSubdomain('');
       setSearchResult(null);
       fetchDomains();
       setActiveTab('list');
     } else {
-      alert(data.message);
+      toast.error(data.message);
     }
   };
 
@@ -127,33 +128,38 @@ export default function Dashboard() {
       }
       window.location.href = url;
     } else {
-      alert('Failed to generate bridge token');
+      toast.error('Failed to generate bridge token');
     }
   };
 
   const deleteDomain = async (domainId: string) => {
-    if (!window.confirm("Are you sure you want to delete this domain? All associated DNS records will also be deleted. This cannot be undone.")) {
-      return;
-    }
-    
-    try {
-      const res = await apiFetch(`${API_URL}/domains/${domainId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId })
-      });
-      const data = await res.json();
-      
-      if (res.ok) {
-        alert('Domain deleted successfully!');
-        fetchDomains();
-      } else {
-        alert(data.message || 'Failed to delete domain');
-      }
-    } catch (e) {
-      console.error(e);
-      alert('Network error occurred while deleting domain');
-    }
+    toast('Are you sure you want to delete this domain?', {
+      description: 'All associated DNS records will also be deleted. This cannot be undone.',
+      action: {
+        label: 'Delete',
+        onClick: async () => {
+          try {
+            const res = await apiFetch(`${API_URL}/domains/${domainId}`, {
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId })
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+              toast.success('Domain deleted successfully!');
+              fetchDomains();
+            } else {
+              toast.error(data.message || 'Failed to delete domain');
+            }
+          } catch (e) {
+            console.error(e);
+            toast.error('Network error occurred while deleting domain');
+          }
+        },
+      },
+      cancel: { label: 'Cancel' },
+    });
   };
 
   const handleLogout = () => {
@@ -277,7 +283,7 @@ export default function Dashboard() {
       <aside className="w-64 bg-[#121214] border-r border-white/5 flex flex-col hidden md:flex fixed h-full z-20">
         <div className="h-16 flex items-center px-6 border-b border-white/5 bg-[#09090b]">
           <div className="w-6 h-6 rounded-md bg-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.5)] mr-3"></div>
-          <span className="font-bold text-lg text-white tracking-wide">Dhanvatix</span>
+          <span className="font-bold text-lg text-white tracking-wide">StackInfi & Dhanvatix</span>
         </div>
         
         <div className="p-4 flex-1 space-y-1">
