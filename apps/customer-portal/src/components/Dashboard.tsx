@@ -13,7 +13,9 @@ import {
   Camera,
   CheckCircle2,
   Clock,
-  Trash2
+  Trash2,
+  Menu,
+  X
 } from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -22,6 +24,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [userId, setUserId] = useState<string | null>(localStorage.getItem('userId'));
   const [activeTab, setActiveTab] = useState<'overview' | 'claim' | 'list' | 'profile'>('overview');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Domain State
   const [subdomain, setSubdomain] = useState('');
@@ -279,32 +282,45 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#09090b] text-slate-300 font-sans flex">
       
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-[#121214] border-r border-white/5 flex flex-col hidden md:flex fixed h-full z-20">
-        <div className="h-16 flex items-center px-6 border-b border-white/5 bg-[#09090b]">
-          <div className="w-6 h-6 rounded-md bg-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.5)] mr-3"></div>
-          <span className="font-bold text-lg text-white tracking-wide">StackInfi & Dhanvatix</span>
+      <aside className={`w-64 bg-[#121214] border-r border-white/5 flex flex-col fixed h-full z-40 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-white/5 bg-[#09090b]">
+          <div className="flex items-center">
+            <div className="w-6 h-6 rounded-md bg-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.5)] mr-3"></div>
+            <span className="font-bold text-lg text-white tracking-wide">StackInfi</span>
+          </div>
+          <button onClick={() => setIsMobileMenuOpen(false)} className="md:hidden text-slate-400 hover:text-white">
+            <X size={20} />
+          </button>
         </div>
         
         <div className="p-4 flex-1 space-y-1">
           <div className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4 mt-4 px-2">Menu</div>
           
           <button 
-            onClick={() => setActiveTab('overview')}
+            onClick={() => { setActiveTab('overview'); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'overview' ? 'bg-teal-500/10 text-teal-400' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
           >
             <LayoutDashboard className="w-4 h-4" /> Overview
           </button>
           
           <button 
-            onClick={() => setActiveTab('claim')}
+            onClick={() => { setActiveTab('claim'); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'claim' ? 'bg-teal-500/10 text-teal-400' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
           >
             <Globe className="w-4 h-4" /> Claim Domain
           </button>
           
           <button 
-            onClick={() => setActiveTab('list')}
+            onClick={() => { setActiveTab('list'); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all flex justify-between ${activeTab === 'list' ? 'bg-teal-500/10 text-teal-400' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
           >
             <div className="flex items-center gap-3"><List className="w-4 h-4" /> My Domains</div>
@@ -312,7 +328,7 @@ export default function Dashboard() {
           </button>
           
           <button 
-            onClick={() => setActiveTab('profile')}
+            onClick={() => { setActiveTab('profile'); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'profile' ? 'bg-teal-500/10 text-teal-400' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
           >
             <User className="w-4 h-4" /> Profile
@@ -344,18 +360,23 @@ export default function Dashboard() {
       {/* Main Content */}
       <main className="flex-1 md:ml-64 relative min-h-screen">
         {/* Top Header */}
-        <header className="h-16 flex items-center justify-between px-8 border-b border-white/5 bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-10">
-          <h2 className="text-xl font-bold text-white capitalize">
-            {activeTab === 'overview' ? 'Dashboard Overview' : 
-             activeTab === 'claim' ? 'Claim a New Domain' : 
-             activeTab === 'list' ? 'My Domains' : 'User Profile'}
-          </h2>
-          <div className="flex items-center gap-4">
+        <header className="h-16 flex items-center justify-between px-4 md:px-8 border-b border-white/5 bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden text-slate-400 hover:text-white p-1">
+              <Menu size={24} />
+            </button>
+            <h2 className="text-xl font-bold text-white capitalize hidden sm:block">
+              {activeTab === 'overview' ? 'Dashboard Overview' : 
+               activeTab === 'claim' ? 'Claim a New Domain' : 
+               activeTab === 'list' ? 'My Domains' : 'User Profile'}
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 md:gap-4">
             <button 
               onClick={() => manageDNS()} 
-              className="bg-teal-500 hover:bg-teal-400 text-black px-4 py-1.5 rounded-full font-bold transition-all text-sm shadow-[0_0_15px_rgba(20,184,166,0.3)] flex items-center gap-2"
+              className="bg-teal-500 hover:bg-teal-400 text-black px-3 md:px-4 py-1.5 rounded-full font-bold transition-all text-xs md:text-sm shadow-[0_0_15px_rgba(20,184,166,0.3)] flex items-center gap-1 md:gap-2 whitespace-nowrap"
             >
-              Manage DNS <ChevronRight className="w-4 h-4" />
+              Manage DNS <ChevronRight className="w-3 h-3 md:w-4 md:h-4" />
             </button>
             <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 overflow-hidden cursor-pointer hover:border-teal-500 transition-colors" onClick={() => setActiveTab('profile')}>
               {profile?.profilePicture ? (
@@ -401,11 +422,11 @@ export default function Dashboard() {
                   You are currently using {totalCount} out of your {isInfinite ? 'unlimited' : displayTotalLimit} allowed free subdomains. 
                   Remember that you can claim up to {displayDhanvatixMax} domains for .dhanvatix.in and {displayStackinfiMax} for .stackinfi.in.
                 </p>
-                <div className="flex gap-4">
-                  <button onClick={() => setActiveTab('claim')} className="bg-white text-black px-6 py-2.5 rounded-lg font-semibold hover:bg-slate-200 transition-colors text-sm">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                  <button onClick={() => setActiveTab('claim')} className="bg-white text-black px-6 py-2.5 rounded-lg font-semibold hover:bg-slate-200 transition-colors text-sm w-full sm:w-auto">
                     Claim New Domain
                   </button>
-                  <button onClick={() => setActiveTab('list')} className="bg-slate-800 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-slate-700 transition-colors border border-slate-700 text-sm">
+                  <button onClick={() => setActiveTab('list')} className="bg-slate-800 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-slate-700 transition-colors border border-slate-700 text-sm w-full sm:w-auto">
                     View My Domains
                   </button>
                 </div>
@@ -453,10 +474,10 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
                     <button 
                       onClick={checkDomain} 
-                      className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3.5 rounded-xl transition-colors font-medium border border-slate-700 text-sm"
+                      className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3.5 rounded-xl transition-colors font-medium border border-slate-700 text-sm w-full sm:w-auto"
                     >
                       Check Availability
                     </button>
@@ -468,7 +489,7 @@ export default function Dashboard() {
                           (rootDomain === 'stackinfi.in' && stackinfiCount >= stackinfiMax)
                         )
                       }
-                      className="bg-teal-600 hover:bg-teal-500 text-white px-6 py-3.5 rounded-xl transition-all flex-1 font-bold shadow-lg shadow-teal-500/20 disabled:opacity-50 disabled:shadow-none"
+                      className="bg-teal-600 hover:bg-teal-500 text-white px-6 py-3.5 rounded-xl transition-all flex-1 font-bold shadow-lg shadow-teal-500/20 disabled:opacity-50 disabled:shadow-none w-full sm:w-auto"
                     >
                       Claim Domain
                     </button>
@@ -506,8 +527,9 @@ export default function Dashboard() {
                     <p className="text-slate-400 font-medium">No domains claimed yet.</p>
                   </div>
                 ) : (
-                  <table className="w-full text-left border-collapse">
-                    <thead>
+                  <div className="overflow-x-auto w-full">
+                    <table className="w-full text-left border-collapse min-w-[600px]">
+                      <thead>
                       <tr className="bg-[#09090b] text-xs uppercase tracking-widest text-slate-500 font-semibold">
                         <th className="p-4 pl-6 font-semibold">Domain Name</th>
                         <th className="p-4 font-semibold">Status</th>
@@ -555,6 +577,7 @@ export default function Dashboard() {
                       ))}
                     </tbody>
                   </table>
+                  </div>
                 )}
               </div>
             </div>
@@ -576,9 +599,9 @@ export default function Dashboard() {
                 <form onSubmit={saveProfile} className="space-y-6">
                   
                   {/* Avatar Upload */}
-                  <div className="flex items-center gap-6">
+                  <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-left">
                     <div 
-                      className="w-24 h-24 rounded-full bg-slate-800 border-2 border-dashed border-slate-600 flex items-center justify-center overflow-hidden relative group cursor-pointer hover:border-teal-500 transition-colors"
+                      className="w-24 h-24 rounded-full bg-slate-800 border-2 border-dashed border-slate-600 flex items-center justify-center overflow-hidden relative group cursor-pointer hover:border-teal-500 transition-colors shrink-0"
                       onClick={() => fileInputRef.current?.click()}
                     >
                       {avatarBase64 ? (
@@ -590,7 +613,7 @@ export default function Dashboard() {
                         <span className="text-xs font-bold text-white uppercase tracking-widest">Edit</span>
                       </div>
                     </div>
-                    <div>
+                    <div className="flex flex-col items-center sm:items-start">
                       <h3 className="text-white font-medium mb-1">Profile Picture</h3>
                       <p className="text-xs text-slate-500 mb-3">Max size: 10MB. Recommended 256x256px.</p>
                       <input 
@@ -604,7 +627,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">First Name</label>
                       <input type="text" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-teal-500 transition-all" value={editFirstName} onChange={e => setEditFirstName(e.target.value)} required />
@@ -615,7 +638,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Phone Number</label>
                       <input type="text" className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-teal-500 transition-all" value={editPhone} onChange={e => setEditPhone(e.target.value)} />

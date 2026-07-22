@@ -17,7 +17,9 @@ import {
   List,
   User,
   ShieldAlert,
-  Trash2
+  Trash2,
+  Menu,
+  X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -37,6 +39,7 @@ export default function AdminPortal() {
   const [expandedUserId, setExpandedUserId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [domainRecords, setDomainRecords] = useState<Record<string, any[]>>({});
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -253,11 +256,24 @@ export default function AdminPortal() {
 
   return (
     <div className="min-h-screen bg-[#09090b] text-slate-300 font-sans flex">
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-[#121214] border-r border-white/5 flex flex-col hidden md:flex fixed h-full z-20">
-        <div className="h-16 flex items-center px-6 border-b border-white/5 bg-[#09090b]">
-          <div className="w-6 h-6 rounded-md bg-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.5)] mr-3"></div>
-          <span className="font-bold text-lg text-white tracking-wide">StackInfi & Dhanvatix</span>
+      <aside className={`w-64 bg-[#121214] border-r border-white/5 flex flex-col fixed h-full z-40 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-white/5 bg-[#09090b]">
+          <div className="flex items-center">
+            <div className="w-6 h-6 rounded-md bg-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.5)] mr-3"></div>
+            <span className="font-bold text-lg text-white tracking-wide">StackInfi</span>
+          </div>
+          <button onClick={() => setIsMobileMenuOpen(false)} className="md:hidden text-slate-400 hover:text-white">
+            <X size={20} />
+          </button>
         </div>
         
         <div className="p-4 flex-1 space-y-1">
@@ -314,16 +330,19 @@ export default function AdminPortal() {
         </div>
       </aside>
 
-      <div className="flex-1 md:ml-64 relative min-h-screen flex flex-col">
+      <div className="flex-1 md:ml-64 relative min-h-screen flex flex-col w-full overflow-hidden">
         {/* Admin Header */}
-        <header className="h-16 flex items-center justify-between px-8 border-b border-white/5 bg-[#121214] sticky top-0 z-10">
+        <header className="h-16 flex items-center justify-between px-4 md:px-8 border-b border-white/5 bg-[#121214] sticky top-0 z-10">
         <div className="flex items-center gap-3">
-          <ShieldCheck className="text-red-500" size={24} />
+          <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden text-slate-400 hover:text-white p-1">
+            <Menu size={24} />
+          </button>
+          <ShieldCheck className="text-red-500 hidden sm:block" size={24} />
           <h1 className="text-lg font-bold text-white tracking-wide">StackInfi <span className="text-red-500">Admin</span></h1>
         </div>
-        <div className="flex items-center gap-6">
-          <span className="bg-red-500/10 text-red-400 px-3 py-1.5 rounded-full text-xs font-bold border border-red-500/20 flex items-center gap-2">
-            <Activity size={14} /> System Online
+        <div className="flex items-center gap-4 md:gap-6">
+          <span className="bg-red-500/10 text-red-400 px-3 py-1.5 rounded-full text-[10px] md:text-xs font-bold border border-red-500/20 flex items-center gap-1 md:gap-2">
+            <Activity size={14} className="hidden sm:block" /> Online
           </span>
           <button 
             onClick={handleLogout}
@@ -335,13 +354,13 @@ export default function AdminPortal() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 p-8 max-w-7xl mx-auto w-full">
-        <div className="flex items-center justify-between mb-8">
+      <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full overflow-hidden">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
           <div>
-            <h2 className="text-3xl font-bold text-white mb-2">User Registry & KYC</h2>
-            <p className="text-slate-500">Monitor registered users, their security data, and active domains.</p>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">User Registry & KYC</h2>
+            <p className="text-slate-500 text-sm md:text-base">Monitor registered users, their security data, and active domains.</p>
           </div>
-          <div className="relative w-72">
+          <div className="relative w-full md:w-72">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
             <input 
               type="text" 
@@ -373,8 +392,8 @@ export default function AdminPortal() {
 
         {/* Users Table */}
         <div className="bg-[#121214] rounded-2xl border border-white/5 overflow-hidden shadow-2xl">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
                 <tr className="bg-black/20 text-slate-500 text-[11px] uppercase tracking-widest border-b border-white/5">
                   <th className="p-4 pl-6 font-bold w-12"></th>
@@ -455,15 +474,15 @@ export default function AdminPortal() {
                               <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 animate-in fade-in slide-in-from-top-4 duration-300">
                                 
                                 {/* KYC SECURITY CARD */}
-                                <div className="bg-[#09090b] p-6 rounded-2xl border border-white/5 shadow-inner">
-                                  <div className="flex items-center justify-between mb-6">
+                                <div className="bg-[#09090b] p-4 md:p-6 rounded-2xl border border-white/5 shadow-inner">
+                                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
                                     <h4 className="text-sm font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
                                       <ShieldCheck className="text-red-500" size={18} />
                                       Security & KYC Data
                                     </h4>
                                     <button 
                                       onClick={() => toggleBlockUser(u._id, u.status)}
-                                      className={`text-xs font-bold px-3 py-1.5 rounded transition-colors ${u.status === 'suspended' ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20'}`}
+                                      className={`text-xs font-bold px-3 py-1.5 rounded transition-colors w-full sm:w-auto ${u.status === 'suspended' ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20' : 'bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/20'}`}
                                     >
                                       {u.status === 'suspended' ? 'Unblock User' : 'Block User'}
                                     </button>
@@ -516,13 +535,13 @@ export default function AdminPortal() {
                                 </div>
 
                                 {/* DOMAINS CARD */}
-                                <div className="bg-[#09090b] p-6 rounded-2xl border border-white/5 shadow-inner">
-                                  <div className="flex items-center justify-between mb-6">
+                                <div className="bg-[#09090b] p-4 md:p-6 rounded-2xl border border-white/5 shadow-inner">
+                                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-3">
                                     <h4 className="text-sm font-bold text-slate-300 uppercase tracking-widest flex items-center gap-2">
                                       <Globe className="text-purple-400" size={18} />
                                       Claimed Domains ({u.domains?.length || 0})
                                     </h4>
-                                    <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-2 w-full sm:w-auto">
                                       <span className="text-xs text-slate-500 font-bold uppercase">Limit:</span>
                                       <input type="number" min="0" className="w-16 bg-black/40 border border-white/10 rounded px-2 py-1 text-white text-xs outline-none" defaultValue={u.domainLimit !== undefined ? u.domainLimit : 2} id={`limit-${u._id}`} />
                                       <button onClick={() => updateLimit(u._id, parseInt((document.getElementById(`limit-${u._id}`) as HTMLInputElement).value))} className="bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 text-xs px-3 py-1 rounded font-bold transition-colors">Save</button>
@@ -533,9 +552,9 @@ export default function AdminPortal() {
                                     <div className="space-y-3">
                                       {u.domains.map((d: any) => (
                                         <div key={d._id} className="bg-[#121214] border border-white/5 rounded-xl p-4">
-                                          <div className="flex items-center justify-between">
+                                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                             <div>
-                                              <div className="text-white font-bold text-sm">{d.fullDomain}</div>
+                                              <div className="text-white font-bold text-sm break-all">{d.fullDomain}</div>
                                               <div className="text-xs text-slate-500 mt-1">Claimed {new Date(d.createdAt).toLocaleDateString()}</div>
                                             </div>
                                             <div className="flex items-center gap-3">
@@ -558,8 +577,8 @@ export default function AdminPortal() {
                                                       <span className="bg-teal-500/10 text-teal-400 px-1.5 py-0.5 rounded font-bold w-12 text-center">{r.type}</span>
                                                       <span className="flex-1 font-mono truncate text-white">{r.name}</span>
                                                     </div>
-                                                    <div className="flex items-center justify-between mt-1">
-                                                      <span className="text-slate-500 font-mono truncate pr-4">{r.content}</span>
+                                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-1 gap-2">
+                                                      <span className="text-slate-500 font-mono truncate pr-0 sm:pr-4">{r.content}</span>
                                                       <div className="flex gap-2 items-center text-[10px] shrink-0">
                                                         {r.proxied ? <span className="text-orange-400 border border-orange-500/20 bg-orange-500/10 px-1.5 rounded">Proxied</span> : <span className="text-slate-500 border border-white/5 bg-black/40 px-1.5 rounded">DNS Only</span>}
                                                         <span className="bg-slate-800 px-1.5 rounded text-slate-400 border border-slate-700">TTL: {r.ttl === 1 ? 'Auto' : r.ttl}</span>

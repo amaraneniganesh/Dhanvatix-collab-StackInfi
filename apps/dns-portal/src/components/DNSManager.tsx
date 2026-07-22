@@ -152,7 +152,7 @@ export default function DNSManager({ domainId, rootDomain, onBack }: DNSManagerP
           Add New Record
         </h3>
         <form onSubmit={handleAddRecord}>
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
             {/* Type */}
             <div className="md:col-span-2">
               <label className="block text-[11px] font-bold text-slate-500 mb-2 uppercase tracking-widest">Type</label>
@@ -252,11 +252,11 @@ export default function DNSManager({ domainId, rootDomain, onBack }: DNSManagerP
             </div>
           </div>
 
-          <div className="mt-6 flex justify-end gap-3 pt-6 border-t border-white/5">
+          <div className="mt-6 flex flex-col sm:flex-row justify-end gap-3 pt-6 border-t border-white/5">
             <button 
               type="submit" 
               disabled={isAdding}
-              className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-2.5 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.2)] disabled:opacity-50 flex items-center gap-2"
+              className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-3 sm:py-2.5 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.2)] disabled:opacity-50 flex items-center justify-center gap-2 w-full sm:w-auto"
             >
               {isAdding ? (
                 <span className="animate-pulse">Saving...</span>
@@ -285,8 +285,8 @@ export default function DNSManager({ domainId, rootDomain, onBack }: DNSManagerP
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left border-collapse min-w-[800px]">
             <thead>
               <tr className="bg-black/20 text-slate-500 text-[11px] uppercase tracking-widest border-b border-white/5">
                 <th className="p-4 pl-6 font-bold">Type</th>
@@ -426,14 +426,14 @@ export default function DNSManager({ domainId, rootDomain, onBack }: DNSManagerP
                         <td className="p-4 pr-6 text-right flex justify-end gap-2">
                           <button 
                             onClick={() => startEditing(r)}
-                            className="bg-blue-500/10 text-blue-400 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition hover:bg-blue-500/20 hover:scale-110"
+                            className="bg-blue-500/10 text-blue-400 p-2 rounded-lg opacity-100 md:opacity-0 group-hover:opacity-100 transition hover:bg-blue-500/20 hover:scale-110"
                             title="Edit Record"
                           >
                             <Edit2 size={16} />
                           </button>
                           <button 
                             onClick={() => handleDeleteRecord(r.id)}
-                            className="bg-red-500/10 text-red-400 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition hover:bg-red-500/20 hover:scale-110"
+                            className="bg-red-500/10 text-red-400 p-2 rounded-lg opacity-100 md:opacity-0 group-hover:opacity-100 transition hover:bg-red-500/20 hover:scale-110"
                             title="Delete Record"
                           >
                             <Trash2 size={16} />
