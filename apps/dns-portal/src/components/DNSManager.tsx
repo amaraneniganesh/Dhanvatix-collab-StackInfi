@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Trash2, Globe, Server, Activity, ShieldCheck, Edit2, Check, X } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Server, Activity, ShieldCheck, Edit2, Check, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { apiFetch } from '../utils/apiClient';
 
@@ -130,7 +130,7 @@ export default function DNSManager({ domainId, rootDomain, onBack }: DNSManagerP
           }
         },
       },
-      cancel: { label: 'Cancel' },
+      cancel: { label: 'Cancel', onClick: () => {} },
     });
   };
 

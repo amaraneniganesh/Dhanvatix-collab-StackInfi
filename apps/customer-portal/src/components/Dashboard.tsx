@@ -158,7 +158,7 @@ export default function Dashboard() {
           }
         },
       },
-      cancel: { label: 'Cancel' },
+      cancel: { label: 'Cancel', onClick: () => {} },
     });
   };
 
