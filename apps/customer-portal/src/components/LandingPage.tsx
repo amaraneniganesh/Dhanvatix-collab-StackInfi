@@ -48,17 +48,17 @@ export default function LandingPage() {
 
       {/* Navbar */}
       <nav className="fixed top-0 w-full border-b border-white/5 bg-[#09090b]/80 backdrop-blur-md z-50">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md bg-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.5)]"></div>
-            <span className="font-bold text-lg text-white tracking-wide">StackInfi & Dhanvatix</span>
+            <div className="w-6 h-6 rounded-md bg-teal-500 shadow-[0_0_15px_rgba(20,184,166,0.5)] shrink-0"></div>
+            <span className="font-bold text-base sm:text-lg text-white tracking-wide">StackInfi <span className="hidden sm:inline">& Dhanvatix</span></span>
           </div>
-          <div className="flex items-center gap-6">
-            <Link to="/login" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+          <div className="flex items-center gap-3 sm:gap-6">
+            <Link to="/login" className="text-sm font-medium text-slate-400 hover:text-white transition-colors hidden sm:block">
               Log in
             </Link>
-            <Link to="/login" className="text-sm font-medium bg-white text-black px-4 py-2 rounded-full hover:bg-slate-200 transition-colors flex items-center gap-1.5">
-              Get Started <ChevronRight className="w-4 h-4" />
+            <Link to="/login" className="text-xs sm:text-sm font-medium bg-white text-black px-3 sm:px-4 py-2 rounded-full hover:bg-slate-200 transition-colors flex items-center gap-1.5 whitespace-nowrap">
+              Get Started <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
             </Link>
           </div>
         </div>
@@ -73,35 +73,35 @@ export default function LandingPage() {
         {/* Grid pattern overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none"></div>
 
-        <div className="relative z-10 flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-xs font-medium text-teal-300 mb-8">
-            <Sparkles className="w-3.5 h-3.5" />
+        <div className="relative z-10 flex flex-col items-center px-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 backdrop-blur-sm text-xs font-medium text-teal-300 mb-6 sm:mb-8 text-center">
+            <Sparkles className="w-3.5 h-3.5 shrink-0" />
             <span>Introducing StackInfi & Dhanvatix Subdomains</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.1] mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-white max-w-4xl leading-[1.1] mb-4 sm:mb-6">
             Unleash the power of <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-blue-500">
               intuitive domain control
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-400 max-w-3xl mb-10 leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-slate-400 max-w-3xl mb-8 sm:mb-10 leading-relaxed">
             Say goodbye to outdated domain registrars. Build your digital infrastructure with premium domains like <strong className="text-white">.stackinfi.in</strong> and <strong className="text-white">.dhanvatix.in</strong>. Smart, intuitive. And never boring.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <Link to="/login" className="px-8 py-4 rounded-full bg-white text-black font-semibold hover:bg-slate-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
+            <Link to="/login" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-black font-semibold hover:bg-slate-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] flex items-center justify-center gap-2">
               Claim your domain <ChevronRight className="w-4 h-4" />
             </Link>
-            <Link to="#features" className="px-8 py-4 rounded-full bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-all">
+            <Link to="#features" className="w-full sm:w-auto px-8 py-4 rounded-full bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-all text-center">
               Explore features
             </Link>
           </div>
         </div>
 
-        {/* Abstract App UI Mockup */}
-        <div className="relative z-10 w-full max-w-5xl mt-20 rounded-2xl border border-white/10 bg-[#18181b]/80 backdrop-blur-xl shadow-2xl overflow-hidden">
+        {/* Abstract App UI Mockup - Hidden on very small screens */}
+        <div className="relative z-10 w-full max-w-5xl mt-12 sm:mt-20 rounded-2xl border border-white/10 bg-[#18181b]/80 backdrop-blur-xl shadow-2xl overflow-hidden hidden sm:block">
           <div className="h-12 border-b border-white/10 flex items-center px-4 gap-2">
             <div className="flex gap-1.5">
               <div className="w-3 h-3 rounded-full bg-slate-600"></div>
@@ -289,20 +289,20 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-[#09090b] py-12 px-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+      <footer className="border-t border-white/10 bg-[#09090b] py-12 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-6 text-center md:flex-row md:justify-between md:text-left">
           <div className="flex items-center gap-2">
             <div className="w-5 h-5 rounded-[4px] bg-teal-500"></div>
             <span className="font-bold text-white tracking-wide">StackInfi & Dhanvatix</span>
           </div>
-          <div className="flex gap-6 text-sm text-slate-500">
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm text-slate-500">
             <a href="#" className="hover:text-white transition">Terms</a>
             <a href="#" className="hover:text-white transition">Privacy</a>
             <a href="#" className="hover:text-white transition">Status</a>
             <a href="#" className="hover:text-white transition">Contact</a>
           </div>
           <div className="text-sm text-slate-600">
-            &copy; {new Date().getFullYear()} StackInfi & Dhanvatix Inc. All rights reserved.
+            &copy; {new Date().getFullYear()} StackInfi & Dhanvatix Inc.
           </div>
         </div>
       </footer>

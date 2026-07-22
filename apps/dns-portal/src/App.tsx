@@ -9,7 +9,9 @@ import {
   User, 
   LogOut, 
   ChevronRight,
-  Globe
+  Globe,
+  Menu,
+  X
 } from 'lucide-react';
 import { apiFetch } from './utils/apiClient';
 
@@ -27,6 +29,7 @@ function App() {
   // Navigation State
   const [activeTab, setActiveTab] = useState<'overview' | 'whois'>('overview');
   const [selectedDomain, setSelectedDomain] = useState<any | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Whois State
   const [whoisQuery, setWhoisQuery] = useState('');
@@ -172,25 +175,38 @@ function App() {
   return (
     <div className="min-h-screen bg-[#09090b] text-slate-300 font-sans flex">
       
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-[#121214] border-r border-white/5 flex flex-col hidden md:flex fixed h-full z-20">
-        <div className="h-16 flex items-center px-6 border-b border-white/5 bg-[#09090b]">
-          <div className="w-6 h-6 rounded-md bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.5)] mr-3"></div>
-          <span className="font-bold text-lg text-white tracking-wide">StackInfi & Dhanvatix DNS</span>
+      <aside className={`w-64 bg-[#121214] border-r border-white/5 flex flex-col fixed h-full z-40 transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-white/5 bg-[#09090b]">
+          <div className="flex items-center">
+            <div className="w-6 h-6 rounded-md bg-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.5)] mr-3"></div>
+            <span className="font-bold text-base text-white tracking-wide">DNS Portal</span>
+          </div>
+          <button onClick={() => setIsMobileMenuOpen(false)} className="md:hidden text-slate-400 hover:text-white">
+            <X size={20} />
+          </button>
         </div>
         
         <div className="p-4 flex-1 space-y-1">
           <div className="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-4 mt-4 px-2">Menu</div>
           
           <button 
-            onClick={() => { setActiveTab('overview'); setSelectedDomain(null); }}
+            onClick={() => { setActiveTab('overview'); setSelectedDomain(null); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'overview' && !selectedDomain ? 'bg-purple-500/10 text-purple-400' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
           >
             <LayoutDashboard className="w-4 h-4" /> Overview
           </button>
           
           <button 
-            onClick={() => { setActiveTab('whois'); setSelectedDomain(null); }}
+            onClick={() => { setActiveTab('whois'); setSelectedDomain(null); setIsMobileMenuOpen(false); }}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${activeTab === 'whois' ? 'bg-purple-500/10 text-purple-400' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
           >
             <Search className="w-4 h-4" /> WHOIS Lookup
@@ -216,28 +232,33 @@ function App() {
       {/* Main Content */}
       <main className="flex-1 md:ml-64 relative min-h-screen">
         {/* Top Header */}
-        <header className="h-16 flex items-center justify-between px-8 border-b border-white/5 bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-10">
-          <h2 className="text-xl font-bold text-white flex items-center gap-3">
-            {selectedDomain ? (
-              <>
-                <button onClick={() => setSelectedDomain(null)} className="text-slate-400 hover:text-white transition-colors">
-                  Overview
-                </button>
-                <ChevronRight className="w-4 h-4 text-slate-600" />
-                <span className="text-purple-400">{selectedDomain.fullDomain}</span>
-              </>
-            ) : activeTab === 'overview' ? 'DNS Overview' : 'WHOIS Lookup'}
-          </h2>
-          <div className="flex items-center gap-4">
-            <span className="bg-green-500/10 text-green-400 px-3 py-1.5 rounded-full text-xs font-bold border border-green-500/20 flex items-center gap-2">
+        <header className="h-16 flex items-center justify-between px-4 md:px-8 border-b border-white/5 bg-[#09090b]/80 backdrop-blur-md sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden text-slate-400 hover:text-white p-1">
+              <Menu size={24} />
+            </button>
+            <h2 className="text-base sm:text-xl font-bold text-white flex items-center gap-2">
+              {selectedDomain ? (
+                <>
+                  <button onClick={() => setSelectedDomain(null)} className="text-slate-400 hover:text-white transition-colors hidden sm:block">
+                    Overview
+                  </button>
+                  <ChevronRight className="w-4 h-4 text-slate-600 hidden sm:block" />
+                  <span className="text-purple-400 truncate max-w-[160px] sm:max-w-none">{selectedDomain.fullDomain}</span>
+                </>
+              ) : activeTab === 'overview' ? 'DNS Overview' : 'WHOIS Lookup'}
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="bg-green-500/10 text-green-400 px-2 sm:px-3 py-1.5 rounded-full text-xs font-bold border border-green-500/20 hidden sm:flex items-center gap-2">
               <ShieldCheck size={14} /> Secure Bridge
             </span>
-            <div className="flex items-center gap-3 border-l border-white/10 pl-4">
+            <div className="flex items-center gap-2 sm:gap-3 border-l border-white/10 pl-3 sm:pl-4">
               <div className="text-right hidden sm:block">
                 <div className="text-sm font-bold text-white leading-tight">{profile?.name || 'Loading...'}</div>
                 <div className="text-xs text-slate-500 font-mono">{profile?.username || ''}</div>
               </div>
-              <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 overflow-hidden">
+              <div className="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 overflow-hidden shrink-0">
                 {profile?.profilePicture ? (
                   <img src={profile.profilePicture} alt="Avatar" className="w-full h-full object-cover" />
                 ) : (
@@ -249,7 +270,7 @@ function App() {
         </header>
 
         {/* Content Area */}
-        <div className="p-8 max-w-5xl mx-auto">
+        <div className="p-4 sm:p-8 max-w-5xl mx-auto w-full">
           
           {selectedDomain ? (
             <DNSManager 
@@ -338,7 +359,7 @@ function App() {
                 <h2 className="text-2xl font-bold text-white mb-2">WHOIS Lookup</h2>
                 <p className="text-slate-400 text-sm mb-6">Instantly query domain registration and nameserver details.</p>
                 
-                <form onSubmit={handleWhoisLookup} className="flex gap-3 mb-8">
+                <form onSubmit={handleWhoisLookup} className="flex flex-col sm:flex-row gap-3 mb-8">
                   <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                     <input 
@@ -353,7 +374,7 @@ function App() {
                   <button 
                     type="submit" 
                     disabled={isWhoisLoading}
-                    className="bg-purple-600 hover:bg-purple-500 text-white px-8 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.2)] disabled:opacity-50"
+                    className="bg-purple-600 hover:bg-purple-500 text-white px-8 py-3.5 rounded-xl font-bold transition-all shadow-[0_0_15px_rgba(139,92,246,0.2)] disabled:opacity-50 whitespace-nowrap"
                   >
                     {isWhoisLoading ? 'Querying...' : 'Lookup'}
                   </button>
