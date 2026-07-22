@@ -16,7 +16,8 @@ import {
   LayoutDashboard,
   List,
   User,
-  ShieldAlert
+  ShieldAlert,
+  Trash2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -151,6 +152,34 @@ export default function AdminPortal() {
       }
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const deleteAdminRecord = async (domainId: string, recordId: string) => {
+    if (!window.confirm('Are you sure you want to delete this DNS record? This action is permanent.')) return;
+    try {
+      const res = await apiFetch(`${API_URL}/admin/domains/${domainId}/records/${recordId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        toast.success('Record deleted successfully');
+        // Refresh records silently
+        const refreshRes = await apiFetch(`${API_URL}/admin/domains/${domainId}/records`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (refreshRes.ok) {
+          const data = await refreshRes.json();
+          setDomainRecords(prev => ({ ...prev, [domainId]: data.records }));
+        }
+      } else {
+        const error = await res.json();
+        toast.error(error.message || 'Failed to delete record');
+      }
+    } catch (e) {
+      toast.error('Network error deleting record');
     }
   };
 
@@ -534,6 +563,13 @@ export default function AdminPortal() {
                                                       <div className="flex gap-2 items-center text-[10px] shrink-0">
                                                         {r.proxied ? <span className="text-orange-400 border border-orange-500/20 bg-orange-500/10 px-1.5 rounded">Proxied</span> : <span className="text-slate-500 border border-white/5 bg-black/40 px-1.5 rounded">DNS Only</span>}
                                                         <span className="bg-slate-800 px-1.5 rounded text-slate-400 border border-slate-700">TTL: {r.ttl === 1 ? 'Auto' : r.ttl}</span>
+                                                        <button 
+                                                          onClick={() => deleteAdminRecord(d._id, r.id)}
+                                                          className="text-red-400 hover:text-white hover:bg-red-500 p-1 rounded transition-colors ml-1"
+                                                          title="Delete Record"
+                                                        >
+                                                          <Trash2 size={12} />
+                                                        </button>
                                                       </div>
                                                     </div>
                                                   </div>
