@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ChevronLeft, KeyRound, Sparkles, UserPlus, Fingerprint, Mail } from 'lucide-react';
 import { apiFetch } from '../utils/apiClient';
@@ -8,6 +8,14 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 export default function AuthPage() {
   const navigate = useNavigate();
   const [view, setView] = useState<'login' | 'register' | 'otp' | 'forgot-password'>('login');
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userId');
+    const expiresAt = localStorage.getItem('sessionExpiresAt');
+    if (userId && expiresAt && new Date().getTime() < parseInt(expiresAt, 10)) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
   
   // Registration fields
   const [firstName, setFirstName] = useState('');
